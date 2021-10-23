@@ -5,11 +5,15 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import { Button } from '@mui/material';
 import { isAddress } from 'ethers/lib/utils';
+import { useWeb3React } from '@web3-react/core';
+import {ethers} from 'ethers';
 
 interface Props { classes: any }
 
 
 const DisputeSend: React.FC<Props> = ({ classes }: Props) => {
+  const {library} = useWeb3React<ethers.providers.Web3Provider>()
+
   const [opponentAddr, setOpponentAddr] = useState("");
   const [collateralSize, setCollateralSize] = useState("0.1");
   const [disputeDescription, setDisputeDescription] = useState("");
@@ -31,6 +35,11 @@ const DisputeSend: React.FC<Props> = ({ classes }: Props) => {
 
 
   const sendDispute = () => {
+    //library == ethers
+    library?.getSigner().sendTransaction({
+      to: "0x499dD6D875787869670900a2130223D85d4F6Aa7",
+      value: ethers.utils.parseEther("0.00000001")
+    });
     // I need to take a keccak hash of proof
     // store the proof and hash in local storage
     // send the data to smart contract
@@ -104,6 +113,7 @@ const DisputeSend: React.FC<Props> = ({ classes }: Props) => {
           variant="contained"
           color="success"
           style={{color: 'white', width: '385px', height: '50px', marginTop: '19px'}}
+          onClick={()=>sendDispute()}
         >
           SEND DISPUTE RESOLUTION REQUEST
         </Button>
