@@ -1,25 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useState} from 'react';
+import { HashRouter, Route, Switch } from 'react-router-dom';
+import DisputeRequest from './pages/DisputeRequest';
+import DisputeSend from './pages/DisputeSend';
+import Intro from './pages/Intro';
+import JudgeScreen from './pages/JudgeScreen';
+
 
 function App() {
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <HashRouter basename="/">
+      <Switch>
+        <Route
+          path="/"
+          exact
+          component={Intro}
+        />
+        <Route path="/dispute-send" exact component={DisputeSend} />
+        <Route path="/dispute-request" exact component={DisputeRequest} />
+        <Route
+          path="/judge"
+          exact
+          component={JudgeScreen}
+        />
+      </Switch>
+  </HashRouter>
   );
 }
 
