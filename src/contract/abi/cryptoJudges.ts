@@ -67,6 +67,11 @@ const abi = [{
     "name": "getCase",
     "outputs": [{
       "components": [{
+          "internalType": "uint256",
+          "name": "caseId",
+          "type": "uint256"
+        },
+        {
           "components": [{
               "internalType": "address",
               "name": "addr",
@@ -175,6 +180,11 @@ const abi = [{
     "name": "getCaseById",
     "outputs": [{
       "components": [{
+          "internalType": "uint256",
+          "name": "caseId",
+          "type": "uint256"
+        },
+        {
           "components": [{
               "internalType": "address",
               "name": "addr",

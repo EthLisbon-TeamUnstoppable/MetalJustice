@@ -6,6 +6,7 @@ import Intro from './pages/Intro';
 import JudgeScreen from './pages/JudgeScreen';
 import { Web3ReactProvider } from '@web3-react/core'
 import {ethers} from 'ethers';
+import DisclosureProof from './pages/DisclosureProof';
 
 function getLibrary(provider: any) {
   return new ethers.providers.Web3Provider(provider) // this will vary according to whether you use e.g. ethers or web3.js
@@ -23,6 +24,7 @@ function App() {
           />
           <Route path="/dispute-send" exact component={DisputeSend} />
           <Route path="/dispute-request" exact component={DisputeRequest} />
+          <Route path="/disclosure" exact component={DisclosureProof} />
           <Route
             path="/judge"
             exact

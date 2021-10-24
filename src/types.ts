@@ -9,3 +9,10 @@ export interface Dispute {
   description: string,
   participants: Participant[]
 }
+
+export type LocalDispute = {
+  proofData: string,
+  proofHash: string
+}
+
+export type LocalDisputes = Record<number, LocalDispute>;

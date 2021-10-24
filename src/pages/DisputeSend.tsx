@@ -1,4 +1,5 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { withStyles }  from "@material-ui/styles";
 import styles from "../styles/app.styles";
 import Typography from '@mui/material/Typography';
@@ -7,13 +8,17 @@ import { Button } from '@mui/material';
 import { isAddress } from 'ethers/lib/utils';
 import { useWeb3React } from '@web3-react/core';
 import {ethers} from 'ethers';
+import cryptoJudges from '../contract/abi/cryptoJudges';
+import { keccak256 as sha3 } from 'js-sha3';
+import { getFromLocalStorage, setToLocalStorage } from '../Utils/localStorage.helper';
+import { LocalDispute, LocalDisputes } from '../types';
+import { contractAddress } from '../Utils/constants';
 
 interface Props { classes: any }
 
 
 const DisputeSend: React.FC<Props> = ({ classes }: Props) => {
   const {library} = useWeb3React<ethers.providers.Web3Provider>()
-
   const [opponentAddr, setOpponentAddr] = useState("");
   const [collateralSize, setCollateralSize] = useState("0.1");
   const [disputeDescription, setDisputeDescription] = useState("");
@@ -25,6 +30,7 @@ const DisputeSend: React.FC<Props> = ({ classes }: Props) => {
     proofData: false
   });
 
+  const history = useHistory();
   const isError = ():boolean => Object.values(validations).some(value => value === false );
   const onChangeValue = (value: string, setFunc: React.Dispatch<React.SetStateAction<string>>) => setFunc(value);
   const updateValidation = (key: keyof typeof validations, value: boolean) => {
@@ -34,15 +40,44 @@ const DisputeSend: React.FC<Props> = ({ classes }: Props) => {
   }
 
 
-  const sendDispute = () => {
+  const sendDispute = async () => {
     //library == ethers
-    library?.getSigner().sendTransaction({
-      to: "0x499dD6D875787869670900a2130223D85d4F6Aa7",
-      value: ethers.utils.parseEther("0.00000001")
-    });
-    // I need to take a keccak hash of proof
-    // store the proof and hash in local storage
-    // send the data to smart contract
+
+    const proofHash = sha3(proof);
+    // const bytes32proofHash = ethers.utils.id(proofHash);
+    console.log({proof, proofHash});
+
+
+    const signer = library?.getSigner();
+    const contract = new ethers.Contract(contractAddress,
+      cryptoJudges, signer);
+
+
+    const accounts = await library?.listAccounts()
+    const currentAccount = accounts![0];
+    const overrides = {
+      value: ethers.utils.parseEther(collateralSize),
+      from: currentAccount
+    }
+    
+    //TODO get the caseId from createCase instead of getCase
+    const caseData = await contract.createCase(opponentAddr, disputeDescription, "0x" + proofHash, overrides)
+      .then(async (tx:any) => await tx.wait()).then(async (atx:any) =>  await contract.functions.getCase(currentAccount));
+    
+    const caseId = caseData[0].caseId.toNumber()
+    console.log(caseId);
+    //TODO Get the caseId and store the proof and it's hash in local storage under
+    //TODO address: {caseId: {proofData, proofHash}}
+    //TODO redirect towards disclosure proof event? 
+    
+    const localDisputes = getFromLocalStorage<LocalDisputes>(currentAccount) ?? {};
+    localDisputes[caseId] = {
+      proofData: proof,
+      proofHash
+    };
+    setToLocalStorage(currentAccount, localDisputes);
+    return history.push('/disclosure');
+    // need somehow to get the caseId and update the localStorage info for future reference
     // redirect user to the new page where I will disclosure the proof from local storage (in case if user will go afk)
   }
 
