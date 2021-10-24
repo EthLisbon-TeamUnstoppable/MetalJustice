@@ -1,46 +1,29 @@
-# Getting Started with Create React App
+# MetalJustice
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Overview
+MetalJustice is a fair and decentralized system for resolving personal disputes between two parties.
 
-## Available Scripts
+## Contract actors
+ - Requester - a person who creates the dispute. During a dispute two people provide some collateral. The winner receives the whole collateral.
+ - Opponent - a person who accepts the dispute from a requester.
+ - Judges - resolve disputes by checking proofs provided by requesters and opponents. Anyone can become a judge by staking ether to the smart contract. If a judge receives too many appeals, their stake will be lost. So judges are incentivised to resolve cases fairly. Participating judges earn a commision from each resolved case.
 
-In the project directory, you can run:
+## Judging protocol
+ 1. Case creation
+ A requester creates a case by submitting a collateral, case description, opponents address and the hash of their side of the proof. 
+ 2. Case acceptance
+ An opponent accepts a case by matching the requester's collateral and providing the hash of their side of the proof.
+ 3. Proof disclosure
+ To ensure that opponents do not ignore cases based on the provided proof, only proof hashes are submitted initially. Once both participants are commited to the dispute, they can disclose proofs for judging to begin. The proofs may be simply a text description or a link to some materials. 
+ 4. Judging
+ Once both participants submit their proofs, judging can begin. Judges are assigned randomly to a case selected uniformly from the list of available judges.
+ Each judge must submit their decision. The winner is determined by simple majority.
+ 5. Appeal
+ Once a decision is made by the judges, any of the participants can appeal the decision. To initiate the appeal they must provide more collateral. And in case of an appeal the number of judges will be increased. When an appeal is submitted, a new set of judges is assigned to the case and judging begins again.
+ 6. Finalization
+ If a decision is reached and no appeal was made, the case is finalized. Judges receive their commision and the winner receives the rest of collaterall.
 
-### `yarn start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `yarn test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `yarn build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+## DApp
+The protocol is fully decentralized, without a backend. 
+The front-end UI can be seen here [Figma UI](https://www.figma.com/file/LKBhUJKBFO2JtgLa1xx0n0/Private-Justice?node-id=0%3A1)
+Source code of the DApp is provided here [MetalJustice](https://github.com/EthLisbon-TeamUnstoppable/MetalJustice).
