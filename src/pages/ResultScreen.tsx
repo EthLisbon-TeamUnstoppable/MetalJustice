@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styles from "../styles/judge.styles";
 
-import { Divider, Typography, Button } from '@mui/material';
-import Card from '@mui/material/Card';
+import { Typography } from '@mui/material';
 import { withStyles }  from "@material-ui/styles";
 import { Dispute } from '../types';
 
@@ -65,7 +64,7 @@ const ResultScreen: React.FC<Props> = ({classes, positive, isJudgeScreen = false
         +10 TO JUDGE REPUTATION
       </Typography>
       <Typography variant="h5">
-        Good job, ser Judge! You earned 10% of the looser’s collateral: {dispute.colateral * 0.1}ETH
+        Good job, ser Judge! You earned 10% of the looser’s collateral: {(Number(dispute.colateral) * 0.1).toFixed(8)}ETH
       </Typography>
     </div>
   )

@@ -9,7 +9,6 @@ import { contractAddress } from '../Utils/constants';
 import cryptoJudges from '../contract/abi/cryptoJudges';
 import { getFromLocalStorage } from '../Utils/localStorage.helper';
 import { Button } from '@mui/material';
-import { keccak256 as sha3 } from 'js-sha3';
 
 interface Props { 
   classes: any,
@@ -60,15 +59,11 @@ const DisclosureProof: React.FC<Props> = ({classes}) => {
     }
     const signer = library?.getSigner();
     const contract = new ethers.Contract(contractAddress, cryptoJudges, signer);
-    console.log({account, contractAddress});
+    
     const caseData = await contract.functions.getCase(account);
     const caseId = caseData[0].caseId.toNumber();
-    console.log(caseData[0]);
-    console.log(caseData[0].caseId.toNumber());
     const disputes = await getFromLocalStorage<LocalDisputes>(account)!;
-    console.log(disputes);
     const proofs = disputes[caseId];
-    console.log(proofs);
     setProofData({...proofs, caseId});
   }
 
@@ -77,12 +72,10 @@ const DisclosureProof: React.FC<Props> = ({classes}) => {
     const contract = new ethers.Contract(contractAddress, cryptoJudges, signer);
     if (!proof) return;
     const {caseId, proofData} = proof;
-    const tx = await contract.discloseProof(caseId, proofData);
-    console.log(tx);
+    const tx = await contract.discloseProof(caseId, proofData,  {gasPrice: 1000000000, gasLimit: 120000});
+    await tx.wait();
     history.push('/')
   }
-
-
 
   return (
     <div style={{

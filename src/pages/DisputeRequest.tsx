@@ -9,8 +9,6 @@ import { useWeb3React } from '@web3-react/core';
 import {ethers} from 'ethers';
 import cryptoJudges from '../contract/abi/cryptoJudges';
 import { keccak256 as sha3 } from 'js-sha3';
-import { getFromLocalStorage, setToLocalStorage } from '../Utils/localStorage.helper';
-import { LocalDispute, LocalDisputes } from '../types';
 import { contractAddress } from '../Utils/constants';
 
 type Props = { 
@@ -68,7 +66,7 @@ const DisputeRequest: React.FC<Props> = ({ classes}: Props) => {
     const caseData = await contract.functions.getCase(account);
     setCase(caseData[0]);
     console.log(caseData[0]);
-    console.log(caseData[0].caseId);
+    console.log(caseData[0].caseId.toNumber());
     setLoading(caseData[0] === undefined);
   }
 
@@ -78,39 +76,24 @@ const DisputeRequest: React.FC<Props> = ({ classes}: Props) => {
 
   const acceptCase =  async () => {
     const proofHash = sha3(proof);
-    // const bytes32proofHash = ethers.utils.id(proofHash);
-    // const test = ethers.utils.hashMessage(proof);
-    // const test2 = ethers.utils.id(proof);
-    // console.log({proof, proofHash, bytes32proofHash, test, test2});
-
-
+    
     const signer = library?.getSigner();
     const contract = new ethers.Contract(contractAddress,
       cryptoJudges, signer);
 
     const collateralSize = caseData?.baseCollateral.toString()
-
     const overrides = {
       value: collateralSize,
-      from: account
+      from: account,
+      gasPrice: 1000000000, 
+      gasLimit: 120000
     }
     const caseId = caseData?.caseId.toString();
-    console.log(caseId);
     const tx = await contract.acceptCase(caseId, "0x" + proofHash, overrides)
-    console.log({tx});
     await tx.wait();
-    const tx2 = await contract.discloseProof(caseId, proof);
+    const tx2 = await contract.discloseProof(caseId, proof, {gasPrice: 1000000000, gasLimit: 120000});
     await tx2.wait();
-    console.log({tx2});
     history.push('/');
-
-    // await contract.acceptCase()
-    // // await contract.createCase(opponentAddr, disputeDescription, bytes32proofHash, overrides)
-    // const localDisputes = getFromLocalStorage<LocalDispute[]>(currentAccount) ?? [];
-    // localDisputes.push({
-    //   proofData: proof, proofHash
-    // });
-    // setToLocalStorage(currentAccount, localDisputes);
   }
 
   const RenderInfoBlock = ({label, value}: {label: string, value: string}) => {

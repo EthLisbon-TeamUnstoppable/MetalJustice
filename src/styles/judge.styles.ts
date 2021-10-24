@@ -57,7 +57,6 @@ export default createStyles((theme: Theme) => ({
   },
   participantCard: {
     minHeight: '344px',
-    width: '319px',
     padding: '28px',
     marginRight: ThemeSpacing(5),
   },

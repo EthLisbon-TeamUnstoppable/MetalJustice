@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import DisputeRequest from './pages/DisputeRequest';
 import DisputeSend from './pages/DisputeSend';

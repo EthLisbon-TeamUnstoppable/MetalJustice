@@ -5,7 +5,7 @@ export interface Participant {
 
 export interface Dispute {
   disputeNum: number,
-  colateral: number,
+  colateral: string,
   description: string,
   participants: Participant[]
 }
@@ -16,3 +16,15 @@ export type LocalDispute = {
 }
 
 export type LocalDisputes = Record<number, LocalDispute>;
+
+export enum CaseStates {
+	Undefined = 0,
+	Requested,
+	Accepted,
+	DisclosingProofs,
+	Judging,
+	Won,
+	Lost,
+	Aborted,
+	Closed
+}

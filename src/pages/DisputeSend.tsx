@@ -11,7 +11,7 @@ import {ethers} from 'ethers';
 import cryptoJudges from '../contract/abi/cryptoJudges';
 import { keccak256 as sha3 } from 'js-sha3';
 import { getFromLocalStorage, setToLocalStorage } from '../Utils/localStorage.helper';
-import { LocalDispute, LocalDisputes } from '../types';
+import { LocalDisputes } from '../types';
 import { contractAddress } from '../Utils/constants';
 
 interface Props { classes: any }
@@ -41,34 +41,23 @@ const DisputeSend: React.FC<Props> = ({ classes }: Props) => {
 
 
   const sendDispute = async () => {
-    //library == ethers
-
     const proofHash = sha3(proof);
-    // const bytes32proofHash = ethers.utils.id(proofHash);
-    console.log({proof, proofHash});
-
-
     const signer = library?.getSigner();
     const contract = new ethers.Contract(contractAddress,
       cryptoJudges, signer);
-
 
     const accounts = await library?.listAccounts()
     const currentAccount = accounts![0];
     const overrides = {
       value: ethers.utils.parseEther(collateralSize),
-      from: currentAccount
+      from: currentAccount,
+      gasPrice: 1000000000, 
+      gasLimit: 120000
     }
     
-    //TODO get the caseId from createCase instead of getCase
     const caseData = await contract.createCase(opponentAddr, disputeDescription, "0x" + proofHash, overrides)
       .then(async (tx:any) => await tx.wait()).then(async (atx:any) =>  await contract.functions.getCase(currentAccount));
-    
     const caseId = caseData[0].caseId.toNumber()
-    console.log(caseId);
-    //TODO Get the caseId and store the proof and it's hash in local storage under
-    //TODO address: {caseId: {proofData, proofHash}}
-    //TODO redirect towards disclosure proof event? 
     
     const localDisputes = getFromLocalStorage<LocalDisputes>(currentAccount) ?? {};
     localDisputes[caseId] = {
@@ -77,8 +66,6 @@ const DisputeSend: React.FC<Props> = ({ classes }: Props) => {
     };
     setToLocalStorage(currentAccount, localDisputes);
     return history.push('/disclosure');
-    // need somehow to get the caseId and update the localStorage info for future reference
-    // redirect user to the new page where I will disclosure the proof from local storage (in case if user will go afk)
   }
 
   return (
